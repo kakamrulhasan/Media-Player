@@ -1,6 +1,8 @@
 import 'dart:math';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_application_7/theme_provider.dart';
+import 'package:provider/provider.dart';
 import 'model.dart';
 
 class MusicPlayerScreen extends StatefulWidget {
@@ -143,6 +145,8 @@ class _MusicPlayerScreenState extends State<MusicPlayerScreen> {
     return "$minutes:${seconds.toString().padLeft(2, '0')}";
   }
 
+
+
   @override
   Widget build(BuildContext context) {
     final Song song = _playlist[_currentIndex];
@@ -153,8 +157,22 @@ class _MusicPlayerScreenState extends State<MusicPlayerScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Center(child: Text("Music App")),
-      ),
+  title: Center(child: const Text("Music App")),
+
+  actions: [
+    Consumer<ThemeProvider>(
+      builder: (context, themeProvider, _) {
+        return Switch(
+          value: themeProvider.isDark,
+          onChanged: (value) {
+            themeProvider.toggleTheme(value);
+          },
+        );
+      },
+    ),
+  ],
+),
+
 
       body: Padding(
         padding: const EdgeInsets.all(12),
