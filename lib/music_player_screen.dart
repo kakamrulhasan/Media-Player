@@ -174,97 +174,206 @@ class _MusicPlayerScreenState extends State<MusicPlayerScreen> {
 ),
 
 
-      body: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Column(
-          children: [
-            /// --- SONG PLAYING CARD ---
-            Card(
-              elevation: 3,
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
+      body: Container(
+  decoration: BoxDecoration(
+    gradient: LinearGradient(
+      colors: [
+        Theme.of(context).colorScheme.primary.withOpacity(0.3),
+        Theme.of(context).scaffoldBackgroundColor,
+      ],
+      begin: Alignment.topCenter,
+      end: Alignment.bottomCenter,
+    ),
+  ),
+  child: Padding(
+    padding: const EdgeInsets.all(16),
+    child: Column(
+      children: [
+        /// --- ALBUM ART + GLASS CARD ---
+        Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            color: Colors.white.withOpacity(0.05),
+            border: Border.all(color: Colors.white24, width: 1),
+            boxShadow: [
+              BoxShadow(
+                color: Theme.of(context).colorScheme.primary.withOpacity(0.4),
+                blurRadius: 20,
+                spreadRadius: 1,
+              ),
+            ],
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              children: [
+                // Album Art
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(16),
+                  child: Image.network(
+                    "https://picsum.photos/300?random=$_currentIndex",
+                    height: 200,
+                    width: 200,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+
+                const SizedBox(height: 16),
+
+                Text(
+                  song.songName,
+                  style: const TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Text(
+                  song.artiestName,
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.white70,
+                  ),
+                ),
+
+                const SizedBox(height: 10),
+
+                // --- BEAUTIFUL NEON SLIDER ---
+                SliderTheme(
+                  data: SliderTheme.of(context).copyWith(
+                    thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 7),
+                    overlayShape: const RoundSliderOverlayShape(overlayRadius: 14),
+                    trackHeight: 3,
+                    thumbColor: Theme.of(context).colorScheme.primary,
+                    activeTrackColor: Theme.of(context).colorScheme.primary,
+                    inactiveTrackColor: Colors.white24,
+                  ),
+                  child: Slider(
+                    min: 0,
+                    max: maxSeconds,
+                    value: currentSeconds,
+                    onChanged: (value) {
+                      _audioPlayer.seek(Duration(seconds: value.toInt()));
+                    },
+                  ),
+                ),
+
+                // Duration Text
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(song.songName,
-                        style:
-                            const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                    Text(song.artiestName),
+                    Text(formatDuration(_position)),
+                    Text(formatDuration(_duration)),
+                  ],
+                ),
 
-                    // --- SLIDER ---
-                    Slider(
-                      min: 0,
-                      max: maxSeconds,
-                      value: currentSeconds,
-                      onChanged: (value) {
-                        _audioPlayer.seek(Duration(seconds: value.toInt()));
-                      },
+                const SizedBox(height: 10),
+
+                // --- MODERN PLAYER BUTTONS ---
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    IconButton(
+                      iconSize: 36,
+                      onPressed: previous,
+                      icon: const Icon(Icons.skip_previous_rounded),
                     ),
 
-                    // --- TIME ROW ---
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(formatDuration(_position)),
-                        Text(formatDuration(_duration)),
-                      ],
+                    Container(
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Theme.of(context).colorScheme.primary,
+                        boxShadow: [
+                          BoxShadow(
+                            color:
+                                Theme.of(context).colorScheme.primary.withOpacity(0.4),
+                            blurRadius: 20,
+                            spreadRadius: 1,
+                          )
+                        ],
+                      ),
+                      child: IconButton(
+                        iconSize: 36,
+                        onPressed: _togglePlayer,
+                        icon: Icon(
+                          _isPlaying ? Icons.pause_rounded : Icons.play_arrow_rounded,
+                          color: Colors.black,
+                        ),
+                      ),
                     ),
 
-                    // --- PLAYER BUTTONS ---
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        IconButton(
-                          onPressed: previous,
-                          icon: const Icon(Icons.skip_previous),
-                        ),
-
-                        IconButton(
-                          onPressed: _togglePlayer,
-                          icon: Icon(
-                            _isPlaying ? Icons.pause : Icons.play_arrow,
-                          ),
-                          iconSize: 40,
-                        ),
-
-                        IconButton(
-                          onPressed: next,
-                          icon: const Icon(Icons.skip_next),
-                        ),
-                      ],
+                    IconButton(
+                      iconSize: 36,
+                      onPressed: next,
+                      icon: const Icon(Icons.skip_next_rounded),
                     ),
                   ],
                 ),
-              ),
+              ],
             ),
-
-            const SizedBox(height: 10),
-
-            // --- PLAYLIST ---
-            Expanded(
-              child: ListView.builder(
-                itemCount: _playlist.length,
-                itemBuilder: (context, index) {
-                  final Song s = _playlist[index];
-                  final bool isCurrent = index == _currentIndex;
-
-                  return ListTile(
-                    leading: CircleAvatar(child: Text("${index + 1}")),
-                    title: Text(s.songName),
-                    subtitle: Text(s.artiestName),
-                    trailing: Icon(
-                      isCurrent
-                          ? (_isPlaying ? Icons.pause : Icons.play_arrow)
-                          : Icons.play_arrow,
-                    ),
-                    selected: isCurrent,
-                    onTap: () => playSong(index),
-                  );
-                },
-              ),
-            ),
-          ],
+          ),
         ),
-      ),
+
+        const SizedBox(height: 16),
+
+        // --- PLAYLIST TITLE ---
+        const Align(
+          alignment: Alignment.centerLeft,
+          child: Text(
+            "Playlist",
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+        ),
+
+        const SizedBox(height: 8),
+
+        // --- PLAYLIST (Modern List) ---
+        Expanded(
+          child: ListView.builder(
+            itemCount: _playlist.length,
+            itemBuilder: (context, index) {
+              final s = _playlist[index];
+              final isCurrent = index == _currentIndex;
+
+              return Container(
+                margin: const EdgeInsets.symmetric(vertical: 6),
+                decoration: BoxDecoration(
+                  color: isCurrent
+                      ? Theme.of(context).colorScheme.primary.withOpacity(0.2)
+                      : Colors.white.withOpacity(0.03),
+                  borderRadius: BorderRadius.circular(12),
+                  border: isCurrent
+                      ? Border.all(
+                          color: Theme.of(context).colorScheme.primary,
+                          width: 1.5,
+                        )
+                      : Border.all(color: Colors.white10),
+                ),
+                child: ListTile(
+                  leading: CircleAvatar(
+                    backgroundColor: Theme.of(context).colorScheme.primary,
+                    child: Text(
+                      "${index + 1}",
+                      style: const TextStyle(color: Colors.black),
+                    ),
+                  ),
+                  title: Text(s.songName),
+                  subtitle: Text(s.artiestName, style: TextStyle(color: Colors.white70)),
+                  trailing: Icon(
+                    isCurrent
+                        ? (_isPlaying ? Icons.pause_rounded : Icons.play_arrow_rounded)
+                        : Icons.play_arrow_rounded,
+                  ),
+                  onTap: () => playSong(index),
+                ),
+              );
+            },
+          ),
+        ),
+      ],
+    ),
+  ),
+),
+
     );
   }
 }
