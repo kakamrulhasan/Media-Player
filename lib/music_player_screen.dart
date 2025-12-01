@@ -20,19 +20,57 @@ class _MusicPlayerScreenState extends State<MusicPlayerScreen> {
     songUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
     durationSecond: 343,
   ),
-  Song(
-    songName: 'Short Music 1',
-    artiestName: 'MP3',
-    songUrl:
-        'https://files.freemusicarchive.org/storage-freemusicarchive-org/music/ccCommunity/Kevin_MacLeod/Jazz_Sampler/Kevin_MacLeod_-_Local_Forecast_-_Slower.mp3',
-    durationSecond: 30,
-  ),
+
   Song(
     songName: 'Short Music 2',
     artiestName: 'MP3',
     songUrl:
         'https://files.freemusicarchive.org/storage-freemusicarchive-org/music/no_curator/Kevin_MacLeod/Calming/Kevin_MacLeod_-_Clean_Soul.mp3',
     durationSecond: 25,
+  ),
+  Song(
+    songName: 'Test Song',
+    artiestName: 'MP3',
+    songUrl:
+        'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3',
+    durationSecond: 348,
+  ),
+  Song(
+    songName: 'Another Short Music',
+    artiestName: 'MP3',
+    songUrl:
+        'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3',
+    durationSecond: 325,
+  ),
+  Song(
+    songName: 'SoundHelix Song 1',
+    artiestName: 'SoundHelix',
+    songUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
+    durationSecond: 343,
+  ),
+  Song(
+    songName: 'SoundHelix Song 2',
+    artiestName: 'SoundHelix',
+    songUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3',
+    durationSecond: 348,
+  ),
+  Song(
+    songName: 'SoundHelix Song 3',
+    artiestName: 'SoundHelix',
+    songUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3',
+    durationSecond: 325,
+  ),
+  Song(
+    songName: 'SoundHelix Song 4',
+    artiestName: 'SoundHelix',
+    songUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3',
+    durationSecond: 356,
+  ),
+  Song(
+    songName: 'SoundHelix Song 5',
+    artiestName: 'SoundHelix',
+    songUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3',
+    durationSecond: 330,
   ),
 ];
 
