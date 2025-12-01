@@ -4,7 +4,7 @@ class Song {
   final String artiestName;
   final String songUrl;
   final int durationSecond;
-  const Song({
+   Song({
     required this.songName,
     required this.artiestName,
     required this.songUrl,

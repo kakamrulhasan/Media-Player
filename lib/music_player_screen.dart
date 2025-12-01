@@ -1,6 +1,7 @@
+import 'dart:math';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_application_7/model.dart';
+import 'model.dart';
 
 class MusicPlayerScreen extends StatefulWidget {
   const MusicPlayerScreen({super.key});
@@ -11,76 +12,83 @@ class MusicPlayerScreen extends StatefulWidget {
 
 class _MusicPlayerScreenState extends State<MusicPlayerScreen> {
   final AudioPlayer _audioPlayer = AudioPlayer();
-  final List<Song> _playlist = [
-    Song(
-      songName: 'sample1',
-      artiestName: 'No Name',
-      songUrl: '//samplelib.com/lib/preview/mp3/sample-3s.mp3',
-      durationSecond: 3,
-    ),
-    Song(
-      songName: 'sample2',
-      artiestName: 'No Name',
-      songUrl: '//samplelib.com/lib/preview/mp3/sample-3s.mp3',
-      durationSecond: 3,
-    ),
-    Song(
-      songName: 'sample3',
-      artiestName: 'No Name',
-      songUrl: '//samplelib.com/lib/preview/mp3/sample-3s.mp3',
-      durationSecond: 3,
-    ),
-    Song(
-      songName: 'sample4',
-      artiestName: 'No Name',
-      songUrl: '//samplelib.com/lib/preview/mp3/sample-3s.mp3',
-      durationSecond: 3,
-    ),
-  ];
+
+ final List<Song> _playlist = [
+  Song(
+    songName: 'Test Song',
+    artiestName: 'MP3',
+    songUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
+    durationSecond: 343,
+  ),
+  Song(
+    songName: 'Short Music 1',
+    artiestName: 'MP3',
+    songUrl:
+        'https://files.freemusicarchive.org/storage-freemusicarchive-org/music/ccCommunity/Kevin_MacLeod/Jazz_Sampler/Kevin_MacLeod_-_Local_Forecast_-_Slower.mp3',
+    durationSecond: 30,
+  ),
+  Song(
+    songName: 'Short Music 2',
+    artiestName: 'MP3',
+    songUrl:
+        'https://files.freemusicarchive.org/storage-freemusicarchive-org/music/no_curator/Kevin_MacLeod/Calming/Kevin_MacLeod_-_Clean_Soul.mp3',
+    durationSecond: 25,
+  ),
+];
+
   int _currentIndex = 0;
   bool _isPlaying = false;
+
   Duration _duration = Duration.zero;
   Duration _position = Duration.zero;
 
   @override
   void initState() {
-    _listenToPlayer();
     super.initState();
+    _listenToPlayer();
+    playSong(_currentIndex);
   }
 
   void _listenToPlayer() {
-    _audioPlayer.onDurationChanged.listen((duration) {
-      setState(() => _duration = duration);
+    _audioPlayer.onDurationChanged.listen((d) {
+      setState(() => _duration = d);
     });
-    _audioPlayer.onPositionChanged.listen((position) {
-      setState(() => _position = position);
+
+    _audioPlayer.onPositionChanged.listen((p) {
+      setState(() => _position = p);
     });
+
     _audioPlayer.onPlayerStateChanged.listen((state) {
       setState(() => _isPlaying = state == PlayerState.playing);
     });
-    _audioPlayer.onPlayerComplete.listen((_) => next());
+
+    _audioPlayer.onPlayerComplete.listen((_) {
+      next();
+    });
   }
 
   Future<void> playSong(int index) async {
     _currentIndex = index;
-    final song = _playlist[index];
+    final Song song = _playlist[index];
+
     setState(() {
       _position = Duration.zero;
       _duration = Duration(seconds: song.durationSecond);
     });
+
     await _audioPlayer.stop();
-    await _audioPlayer.play(UrlSource(_playlist[index].songUrl));
+    await _audioPlayer.play(UrlSource(song.songUrl));
   }
 
   Future<void> next() async {
-    final int next = (_currentIndex + 1) % _playlist.length;
-    await playSong(next);
+    final int nextIndex = (_currentIndex + 1) % _playlist.length;
+    await playSong(nextIndex);
   }
 
   Future<void> previous() async {
-    final int previous =
+    final int prevIndex =
         (_currentIndex - 1 + _playlist.length) % _playlist.length;
-    await playSong(previous);
+    await playSong(prevIndex);
   }
 
   Future<void> _togglePlayer() async {
@@ -91,62 +99,115 @@ class _MusicPlayerScreenState extends State<MusicPlayerScreen> {
     }
   }
 
-  String formatDuration(Duration duration) {
-    final int minutes = duration.inMinutes;
-    final int second = duration.inSeconds.remainder(60);
-    return '$minutes: ${second.toString().padLeft(2, '0')}';
+  String formatDuration(Duration d) {
+    final minutes = d.inMinutes;
+    final seconds = d.inSeconds % 60;
+    return "$minutes:${seconds.toString().padLeft(2, '0')}";
   }
 
   @override
   Widget build(BuildContext context) {
     final Song song = _playlist[_currentIndex];
+
+    final double maxSeconds = max(_duration.inSeconds.toDouble(), 1);
+    final double currentSeconds =
+        _position.inSeconds.toDouble().clamp(0, maxSeconds);
+
     return Scaffold(
-      appBar: AppBar(title: Center(child: Text('Music App'))),
-      body: Column(
-        children: [
-          Card(
-            child: Column(
-              children: [
-                Text('Song title'),
-                Text('Artiest name'),
+      appBar: AppBar(
+        title: const Center(child: Text("Music App")),
+      ),
 
-                Slider(value: 0, onChanged: (ValueKey) {}),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [Text('current Time'), Text('total duration')],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      body: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          children: [
+            /// --- SONG PLAYING CARD ---
+            Card(
+              elevation: 3,
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
                   children: [
-                    IconButton(
-                      onPressed: () {},
-                      icon: Icon(Icons.skip_previous),
-                    ),
-                    IconButton(onPressed: () {}, icon: Icon(Icons.play_arrow)),
+                    Text(song.songName,
+                        style:
+                            const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                    Text(song.artiestName),
 
-                    IconButton(onPressed: () {}, icon: Icon(Icons.skip_next)),
+                    // --- SLIDER ---
+                    Slider(
+                      min: 0,
+                      max: maxSeconds,
+                      value: currentSeconds,
+                      onChanged: (value) {
+                        _audioPlayer.seek(Duration(seconds: value.toInt()));
+                      },
+                    ),
+
+                    // --- TIME ROW ---
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(formatDuration(_position)),
+                        Text(formatDuration(_duration)),
+                      ],
+                    ),
+
+                    // --- PLAYER BUTTONS ---
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        IconButton(
+                          onPressed: previous,
+                          icon: const Icon(Icons.skip_previous),
+                        ),
+
+                        IconButton(
+                          onPressed: _togglePlayer,
+                          icon: Icon(
+                            _isPlaying ? Icons.pause : Icons.play_arrow,
+                          ),
+                          iconSize: 40,
+                        ),
+
+                        IconButton(
+                          onPressed: next,
+                          icon: const Icon(Icons.skip_next),
+                        ),
+                      ],
+                    ),
                   ],
                 ),
-                const SizedBox(height: 15),
-              ],
+              ),
             ),
-          ),
-          Expanded(
-            child: ListView.builder(
-              itemCount: _playlist.length,
-              itemBuilder: (context, index) {
-                final Song song = _playlist[index];
-                return ListTile(
-                  title: Text(song.songName),
-                  subtitle: Text(song.artiestName),
-                  leading: Text("${_playlist[index]}"),
-                  trailing: Icon(Icons.skip_next),
-                  onTap: () => playSong(index),
-                );
-              },
+
+            const SizedBox(height: 10),
+
+            // --- PLAYLIST ---
+            Expanded(
+              child: ListView.builder(
+                itemCount: _playlist.length,
+                itemBuilder: (context, index) {
+                  final Song s = _playlist[index];
+                  final bool isCurrent = index == _currentIndex;
+
+                  return ListTile(
+                    leading: CircleAvatar(child: Text("${index + 1}")),
+                    title: Text(s.songName),
+                    subtitle: Text(s.artiestName),
+                    trailing: Icon(
+                      isCurrent
+                          ? (_isPlaying ? Icons.pause : Icons.play_arrow)
+                          : Icons.play_arrow,
+                    ),
+                    selected: isCurrent,
+                    onTap: () => playSong(index),
+                  );
+                },
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
