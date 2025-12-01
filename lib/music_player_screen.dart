@@ -189,129 +189,157 @@ class _MusicPlayerScreenState extends State<MusicPlayerScreen> {
     padding: const EdgeInsets.all(16),
     child: Column(
       children: [
-        /// --- ALBUM ART + GLASS CARD ---
+        /// --- ALBUM ART + GLASSMORPHISM CARD ---
+Container(
+  decoration: BoxDecoration(
+    borderRadius: BorderRadius.circular(24),
+    gradient: LinearGradient(
+      colors: [
+        Colors.white.withOpacity(0.08),
+        Colors.white.withOpacity(0.02),
+      ],
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+    ),
+    border: Border.all(color: Colors.white24, width: 1.2),
+    boxShadow: [
+      BoxShadow(
+        color: Theme.of(context).colorScheme.primary.withOpacity(0.3),
+        blurRadius: 30,
+        spreadRadius: 2,
+        offset: const Offset(0, 8),
+      ),
+    ],
+  ),
+  child: Padding(
+    padding: const EdgeInsets.all(24),
+    child: Column(
+      children: [
+        // Album Art with subtle shadow
         Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20),
-            color: Colors.white.withOpacity(0.05),
-            border: Border.all(color: Colors.white24, width: 1),
             boxShadow: [
               BoxShadow(
                 color: Theme.of(context).colorScheme.primary.withOpacity(0.4),
-                blurRadius: 20,
+                blurRadius: 25,
                 spreadRadius: 1,
+                offset: const Offset(0, 10),
               ),
             ],
           ),
-          child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              children: [
-                // Album Art
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(16),
-                  child: Image.network(
-                    "https://picsum.photos/300?random=$_currentIndex",
-                    height: 200,
-                    width: 200,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-
-                const SizedBox(height: 16),
-
-                Text(
-                  song.songName,
-                  style: const TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                Text(
-                  song.artiestName,
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.white70,
-                  ),
-                ),
-
-                const SizedBox(height: 10),
-
-                // --- BEAUTIFUL NEON SLIDER ---
-                SliderTheme(
-                  data: SliderTheme.of(context).copyWith(
-                    thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 7),
-                    overlayShape: const RoundSliderOverlayShape(overlayRadius: 14),
-                    trackHeight: 3,
-                    thumbColor: Theme.of(context).colorScheme.primary,
-                    activeTrackColor: Theme.of(context).colorScheme.primary,
-                    inactiveTrackColor: Colors.white24,
-                  ),
-                  child: Slider(
-                    min: 0,
-                    max: maxSeconds,
-                    value: currentSeconds,
-                    onChanged: (value) {
-                      _audioPlayer.seek(Duration(seconds: value.toInt()));
-                    },
-                  ),
-                ),
-
-                // Duration Text
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(formatDuration(_position)),
-                    Text(formatDuration(_duration)),
-                  ],
-                ),
-
-                const SizedBox(height: 10),
-
-                // --- MODERN PLAYER BUTTONS ---
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    IconButton(
-                      iconSize: 36,
-                      onPressed: previous,
-                      icon: const Icon(Icons.skip_previous_rounded),
-                    ),
-
-                    Container(
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Theme.of(context).colorScheme.primary,
-                        boxShadow: [
-                          BoxShadow(
-                            color:
-                                Theme.of(context).colorScheme.primary.withOpacity(0.4),
-                            blurRadius: 20,
-                            spreadRadius: 1,
-                          )
-                        ],
-                      ),
-                      child: IconButton(
-                        iconSize: 36,
-                        onPressed: _togglePlayer,
-                        icon: Icon(
-                          _isPlaying ? Icons.pause_rounded : Icons.play_arrow_rounded,
-                          color: Colors.black,
-                        ),
-                      ),
-                    ),
-
-                    IconButton(
-                      iconSize: 36,
-                      onPressed: next,
-                      icon: const Icon(Icons.skip_next_rounded),
-                    ),
-                  ],
-                ),
-              ],
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: Image.network(
+              "https://picsum.photos/300?random=$_currentIndex",
+              height: 220,
+              width: 220,
+              fit: BoxFit.cover,
             ),
           ),
         ),
+
+        const SizedBox(height: 20),
+
+        // Song Info
+        Text(
+          song.songName,
+          style: const TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+            shadows: [
+              Shadow(
+                color: Colors.black38,
+                offset: Offset(0, 2),
+                blurRadius: 4,
+              ),
+            ],
+          ),
+        ),
+        Text(
+          song.artiestName,
+          style: TextStyle(
+            fontSize: 16,
+            color: Colors.white70,
+          ),
+        ),
+
+        const SizedBox(height: 16),
+
+        // Slider
+        SliderTheme(
+          data: SliderTheme.of(context).copyWith(
+            thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 8),
+            overlayShape: const RoundSliderOverlayShape(overlayRadius: 16),
+            trackHeight: 3,
+            thumbColor: Theme.of(context).colorScheme.primary,
+            activeTrackColor: Theme.of(context).colorScheme.primary,
+            inactiveTrackColor: Colors.white24,
+          ),
+          child: Slider(
+            min: 0,
+            max: maxSeconds,
+            value: currentSeconds,
+            onChanged: (value) {
+              _audioPlayer.seek(Duration(seconds: value.toInt()));
+            },
+          ),
+        ),
+
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(formatDuration(_position),
+                style: const TextStyle(color: Colors.white70)),
+            Text(formatDuration(_duration),
+                style: const TextStyle(color: Colors.white70)),
+          ],
+        ),
+
+        const SizedBox(height: 14),
+
+        // Player Buttons
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            IconButton(
+              iconSize: 36,
+              onPressed: previous,
+              icon: const Icon(Icons.skip_previous_rounded),
+            ),
+            Container(
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Theme.of(context).colorScheme.primary,
+                boxShadow: [
+                  BoxShadow(
+                    color: Theme.of(context).colorScheme.primary.withOpacity(0.5),
+                    blurRadius: 20,
+                    spreadRadius: 2,
+                  ),
+                ],
+              ),
+              child: IconButton(
+                iconSize: 36,
+                onPressed: _togglePlayer,
+                icon: Icon(
+                  _isPlaying ? Icons.pause_rounded : Icons.play_arrow_rounded,
+                  color: Colors.black,
+                ),
+              ),
+            ),
+            IconButton(
+              iconSize: 36,
+              onPressed: next,
+              icon: const Icon(Icons.skip_next_rounded),
+            ),
+          ],
+        ),
+      ],
+    ),
+  ),
+),
 
         const SizedBox(height: 16),
 
@@ -349,13 +377,15 @@ class _MusicPlayerScreenState extends State<MusicPlayerScreen> {
                       : Border.all(color: Colors.white10),
                 ),
                 child: ListTile(
-                  leading: CircleAvatar(
-                    backgroundColor: Theme.of(context).colorScheme.primary,
-                    child: Text(
-                      "${index + 1}",
-                      style: const TextStyle(color: Colors.black),
+                    leading: ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
+                      child: Image.network(
+                        "https://picsum.photos/100?random=$index",
+                        height: 60,
+                        width: 60,
+                        fit: BoxFit.cover,
+                      ),
                     ),
-                  ),
                   title: Text(s.songName),
                   subtitle: Text(s.artiestName, style: TextStyle(color: Colors.white70)),
                   trailing: Icon(

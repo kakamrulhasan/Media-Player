@@ -25,7 +25,74 @@ class MainApp extends StatelessWidget {
   themeMode: themeProvider.themeMode,
 
   // ☀️ LIGHT THEME (normal default)
-  theme: ThemeData.light(),
+  theme: ThemeData.light().copyWith(
+  scaffoldBackgroundColor: const Color(0xFFF5F5F8), // soft off-white
+  cardColor: Colors.white, // cards pop on light background
+  primaryColor: const Color(0xFF6200EE), // nice purple accent
+  colorScheme: const ColorScheme.light(
+    primary: Color(0xFF6200EE),
+    secondary: Color(0xFF03DAC6), // teal accent
+  ),
+
+  // AppBar
+  appBarTheme: const AppBarTheme(
+    backgroundColor: Color(0xFFFFFFFF),
+    foregroundColor: Color(0xFF6200EE),
+    iconTheme: IconThemeData(color: Color(0xFF6200EE)),
+    elevation: 4,
+    shadowColor: Colors.black26,
+    titleTextStyle: TextStyle(
+      color: Color(0xFF6200EE),
+      fontSize: 20,
+      fontWeight: FontWeight.w600,
+    ),
+  ),
+
+  // Icons
+  iconTheme: const IconThemeData(
+    color: Color(0xFF6200EE),
+  ),
+
+  // Text
+  textTheme: const TextTheme(
+    bodyLarge: TextStyle(color: Colors.black87),
+    bodyMedium: TextStyle(color: Colors.black87),
+    bodySmall: TextStyle(color: Colors.black54),
+    titleMedium: TextStyle(color: Colors.black87),
+  ),
+
+  // Slider Theme
+  sliderTheme: SliderThemeData(
+    activeTrackColor: const Color(0xFF6200EE),
+    inactiveTrackColor: const Color(0xFFC4C4C4),
+    thumbColor: const Color(0xFF6200EE),
+    overlayColor: const Color(0x336200EE),
+    trackHeight: 4,
+    thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 8),
+  ),
+
+  // ListTile
+  listTileTheme: ListTileThemeData(
+    iconColor: const Color(0xFF6200EE),
+    textColor: Colors.black87,
+    tileColor: Colors.white.withOpacity(0.7),
+    selectedColor: const Color(0xFF6200EE),
+  ),
+
+  // ElevatedButton
+  elevatedButtonTheme: ElevatedButtonThemeData(
+    style: ElevatedButton.styleFrom(
+      backgroundColor: const Color(0xFF6200EE),
+      foregroundColor: Colors.white,
+      shadowColor: Colors.black26,
+      elevation: 1,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+    ),
+  ),
+),
+
 
   // 🌙 DARK THEME (CUSTOM ORANGE THEME)
   darkTheme: ThemeData.dark().copyWith(
